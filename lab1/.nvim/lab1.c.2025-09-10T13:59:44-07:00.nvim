@@ -1,0 +1,10 @@
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+  printf("Please enter some text: ");
+
+  char *input = NULL;
+  getline(&input, 0, stdin);
+}

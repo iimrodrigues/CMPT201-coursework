@@ -1,0 +1,25 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(int argc, char *argv[]) {
+  printf("Please enter some text: ");
+
+  char *input = NULL;
+  size_t length = 0;
+  getline(&input, &length, stdin);
+  size_t real_len = strlen(input);
+  input[real_len - 1] = '\0';
+
+  char *tokens = NULL;
+  char *saveptr = NULL;
+
+  tokens = strtok_r(input, " ", &saveptr);
+  while (tokens != NULL) {
+    printf("%s\n", tokens);
+    tokens = strtok_r(NULL, " ", &saveptr);
+  }
+
+  free(input);
+}
