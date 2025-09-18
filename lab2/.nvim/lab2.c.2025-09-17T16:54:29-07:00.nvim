@@ -1,0 +1,23 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+int main() {
+  char *input = NULL;
+  size_t length = 0;
+  printf("Enter programs to run: ");
+  getline(&input, &length, stdin);
+
+  pid_t pid = fork();
+  if (pid == 0) {
+    execlp(input, input, (char *)NULL);
+  } else {
+    if (waitpid(pid, NULL, 0) == -1) {
+      perror("waitpid");
+      exit(EXIT_FAILURE);
+    }
+  }
+}
