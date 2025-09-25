@@ -1,0 +1,28 @@
+#define _POSIX_C_SOURCE 200809
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void printHistory(int size, char *history[]){
+  for (int i = 0; i < size; i++){
+    printf("%s\n", history[i]);
+  }
+}
+
+int main() {
+  char *input_history[5] = {NULL};
+  int start_index = 0;
+
+  while (true) {
+    char *input = NULL;
+    size_t len = 0;
+
+    printf("Enter input: ");
+    getline(&input, &len, stdin);
+    input_history[start_index] = input;
+    start_index++;
+
+    free(input);
+  }
+}

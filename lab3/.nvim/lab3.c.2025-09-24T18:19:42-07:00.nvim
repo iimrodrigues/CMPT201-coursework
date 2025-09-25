@@ -1,0 +1,58 @@
+#define _POSIX_C_SOURCE 200809
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+bool isPrint(char *input) {
+  char *token = NULL;
+  char *saveptr = NULL;
+
+  token = strtok_r(input, " ", &saveptr);
+  if (token != NULL) {
+    return !strcmp(token, "print\n");
+  }
+  return false;
+}
+
+void printHistory(int size, char *history[], int start_index) {
+  int index = start_index;
+  for (int i = 0; i < size; i++) {
+    if (index == size) {
+      index = 0;
+    }
+    printf("%s", history[index]);
+    index++;
+  }
+}
+
+int main() {
+  char *input_history[5] = {NULL};
+  int start_index = 0;
+  int array_count = 0;
+
+  while (true) {
+    char *input = NULL;
+    size_t len = 0;
+
+    printf("Enter input: ");
+    getline(&input, &len, stdin);
+    if (array_count >= 5) {
+      free(input_history[start_index]);
+    }
+    input_history[start_index] = input;
+    printf("added: %s", input_history[start_index]);
+
+    start_index++;
+    if (start_index == 5) {
+      start_index = 0;
+    }
+
+    if (array_count < 5) {
+      array_count++;
+    }
+    if (isPrint(input)) {
+      printHistory(array_count, input_history, start_index);
+    }
+  }
+}
