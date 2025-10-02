@@ -1,0 +1,36 @@
+#define _DEFAULT_SOURCE
+#define _ISOCC99_SOURCE
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#define BLOCK_SIZE 128
+#define HEAP_SIZE 256
+#define BUFFER_SIZE 64
+
+struct Header {
+  uint64_t size;
+  struct Header* next;
+} Header;
+
+void printOut(char* format, void* data, size_t data_size){
+  char buffer[BUFFER_SIZE];
+  ssize_t length = snprintf(buffer, BUFFER_SIZE, format,
+                            data_size == sizeof(uint64_t) ? *(uint64_t *) data
+                                                          : *(void **) data);
+  if (length < 0){
+    perror("snprintf failed.\n");
+    exit(EXIT_FAILURE);
+  }
+  write(STDOUT_FILENO, buffer, length);
+}
+
+void printBlock (char* start){
+  for (int i = 0; i < (BLOCK_SIZE - sizeof(Header)); i++){
+    char* address = (start + sizeof(Header) + i);
+    uint64_t val = (uint64_t)* address;
+    printOut("%lu\n", &val, sizeof(val));
+  }
+}

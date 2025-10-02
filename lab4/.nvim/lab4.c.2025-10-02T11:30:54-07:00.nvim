@@ -1,0 +1,18 @@
+#define _DEFAULT_SOURCE
+#define _ISOCC99_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <unistd.h>
+
+#define BLOCK_SIZE 128
+#define HEAP_SIZE 256
+#define BUFFER_SIZE 64
+
+struct Header {
+  uint64_t size;
+  struct Header* next;
+} Header;
+
+

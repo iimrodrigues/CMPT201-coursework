@@ -1,0 +1,67 @@
+#define _DEFAULT_SOURCE
+#define _ISOCC99_SOURCE
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#define BLOCK_SIZE 128
+#define HEAP_SIZE 256
+#define BUFFER_SIZE 64
+
+struct Header {
+  uint64_t size;
+  struct Header *next;
+} Header;
+
+void printOut(char *format, void *data, size_t data_size) {
+  char buffer[BUFFER_SIZE];
+  ssize_t length = snprintf(buffer, BUFFER_SIZE, format,
+                            data_size == sizeof(uint64_t) ? *(uint64_t *)data
+                                                          : *(void **)data);
+  if (length < 0) {
+    perror("snprintf failed.\n");
+    exit(EXIT_FAILURE);
+  }
+  write(STDOUT_FILENO, buffer, length);
+}
+
+void printBlock(char *start) {
+  for (int i = 0; i < (BLOCK_SIZE - sizeof(struct Header)); i++) {
+    char *address = (start + sizeof(struct Header) + i);
+    uint64_t val = (uint64_t)*address;
+    printOut("%lu\n", &val, sizeof(val));
+  }
+}
+
+int main() {
+  void *start = sbrk(0);
+  if (sbrk(HEAP_SIZE) == NULL) {
+    perror("sbrk failed\n");
+    exit(EXIT_FAILURE);
+  }
+
+  // make blocks
+  struct Header *block1 = (struct Header *)start;
+  block1->size = BLOCK_SIZE;
+  block1->next = NULL;
+  memset((block1 + 1), 0, (BLOCK_SIZE - sizeof(struct Header)));
+
+  struct Header *block2 = (struct Header *)(start + block1->size);
+  block2->size = BLOCK_SIZE;
+  block2->next = block1;
+  memset((block2 + 1), 1, (BLOCK_SIZE - sizeof(struct Header)));
+
+  // print
+  printOut("first block:          %p\n", &block1, sizeof(&block1));
+  printOut("second block:          %p\n", &block2, sizeof(&block2));
+  printOut("first block size:     %lu\n", &block1->size, sizeof(&block1->size));
+  printOut("first block next:     %p\n", &block1->next, sizeof(&block1->next));
+  printOut("second block size:     %lu\n", &block2->size,
+           sizeof(&block2->size));
+  printOut("second block next:     %p\n", &block2->next, sizeof(&block2->next));
+
+  printBlock((char *)block1);
+  printBlock((char *)block2);
+}
