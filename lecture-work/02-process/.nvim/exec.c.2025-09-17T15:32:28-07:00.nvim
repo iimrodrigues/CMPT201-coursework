@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+  pid_t process = fork();
+  if (process == 0) {
+    printf("Child:\n");
+    execl("/bin/ls", "/usr/bin/ls", "-a", "-l", "-h", (char *)NULL);
+  } else {
+    printf("Parent:\n");
+    char *args[] = {"ls", "-a", NULL};
+    execvp("ls", args);
+  }
+}

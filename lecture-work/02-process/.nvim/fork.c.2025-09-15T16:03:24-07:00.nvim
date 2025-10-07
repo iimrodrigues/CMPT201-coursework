@@ -1,0 +1,7 @@
+#include <stdio.h>
+#include <unistd.h>
+
+int main(){
+  printf("PID: %5d, PPID: %5d", getpid(), getppid());
+
+}

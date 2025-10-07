@@ -1,0 +1,12 @@
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+  pid_t process = fork();
+  if (process == 0) {
+    execlp("/bin/ls", "/bin/ls", "-a", "-l", "-h", (char *)NULL);
+  } else {
+    printf("parent");
+  }
+}
