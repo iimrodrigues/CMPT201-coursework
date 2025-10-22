@@ -1,0 +1,32 @@
+#include <pthread.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
+#define _GNU_SOURCE
+#define _POSIX_C_SOURCE 200809L
+
+void *func(void *arg) {
+  char *msg = (char *)arg;
+  // pid_t id = gettid();
+  //  printf("my ID is: %lu\n", id);
+  printf("%s\n", msg);
+  return (void *)strlen(msg);
+}
+
+int main() {
+  pthread_t thread;
+  int status = pthread_create(&thread, NULL, func, "hi!");
+  if (status != 0) {
+    printf("womp womp\n");
+  }
+  void *answer;
+  // check for pthread_join error (!= 0)
+  pthread_join(thread, &answer);
+  uint64_t len = (uint64_t)answer;
+  printf("length of msg: %lu\n", len);
+  // must wait (using join or sleep) so thats the func has time to execute
+  // before main exits
+}
