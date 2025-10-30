@@ -1,0 +1,18 @@
+#include <pthread.h>
+#include <stdio.h>
+#include <unistd.h>
+#define _GNU_SOURCE
+
+void *func() {
+  printf("my ID is: %lu\n", gettid());
+  return 0;
+}
+
+int main() {
+  pthread_t thread;
+  int status = pthread_create(&thread, NULL, func, NULL);
+  if (status != 0) {
+    printf("womp womp\n");
+  }
+  int status2 = pthread_join(thread, NULL);
+}

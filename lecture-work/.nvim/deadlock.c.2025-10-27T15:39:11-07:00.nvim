@@ -1,0 +1,47 @@
+#include <pthread.h>
+#include <stdio.h>
+
+pthread_mutex_t A = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t B = PTHREAD_MUTEX_INITIALIZER;
+
+static void *funcA(void *arg) {
+  pthread_mutex_lock(&A);
+  printf("A Locked - A\n");
+
+  pthread_mutex_lock(&B);
+  printf("B Locked - A\n");
+
+  pthread_mutex_unlock(&B);
+  printf("B unlocked - A\n");
+  pthread_mutex_unlock(&A);
+  printf("A unlocked - A\n");
+
+  pthread_exit(0);
+}
+
+static void *funcB(void *arg) {
+  pthread_mutex_lock(&B);
+  printf("B Locked - B\n");
+
+  pthread_mutex_lock(&A);
+  printf("A Locked - B\n");
+
+  pthread_mutex_unlock(&A);
+  printf("A unlocked - B\n");
+  pthread_mutex_unlock(&B);
+  printf("B unlocked - B\n");
+  
+  pthread_exit(0);
+}
+
+int main() {
+  pthread_t t1;
+  pthread_t t2;
+
+  // add error handling for pthread_create & pthread_join
+  pthread_create(&t1, NULL, funcA, NULL);
+  pthread_create(&t2, NULL, funcB, NULL);
+
+  pthread_join(t1, NULL);
+  pthread_join(t2, NULL);
+}

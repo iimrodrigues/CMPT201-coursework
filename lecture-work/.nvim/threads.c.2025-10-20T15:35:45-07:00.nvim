@@ -1,0 +1,22 @@
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+#define _GNU_SOURCE
+#define _POSIX_C_SOURCE 200809L
+
+void *func() {
+  //pid_t id = gettid();
+  // printf("my ID is: %lu\n", id);
+  return 0;
+}
+
+int main() {
+  pthread_t thread;
+  int status = pthread_create(&thread, NULL, func, NULL);
+  if (status != 0) {
+    printf("womp womp\n");
+  }
+  int status2 = pthread_join(thread, NULL);
+}

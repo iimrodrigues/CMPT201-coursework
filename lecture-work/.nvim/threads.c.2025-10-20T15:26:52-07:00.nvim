@@ -1,0 +1,15 @@
+#include <pthread.h>
+#include <stdio.h>
+
+void *func() {
+  printf("i am thread :D\n");
+  return 0;
+}
+
+int main() {
+  pthread_t thread;
+  int status = pthread_create(&thread, NULL, func, NULL);
+  if (status != 0){
+    printf("womp womp\n");
+  }
+}
